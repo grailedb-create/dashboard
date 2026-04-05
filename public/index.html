@@ -1,0 +1,592 @@
+lr
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AG Unified War Room</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #020205;
+      --card: #08080f;
+      --border: #141424;
+      --purple: #9333ea;
+      --cyan: #06b6d4;
+      --green: #22c55e;
+      --red: #ef4444;
+      --amber: #f59e0b;
+      --muted: #475569;
+      --text: #f1f5f9;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .page-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      min-height: 100vh;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      background: linear-gradient(to bottom, #030308, #020205);
+      box-shadow: 0 0 80px rgba(168, 85, 247, 0.08);
+      position: relative;
+    }
+
+    header {
+      height: 70px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      background: rgba(8, 8, 15, 0.9);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 900;
+      font-size: 20px;
+    }
+
+    .logo-box {
+      font-size: 24px;
+      filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.4));
+    }
+
+    .refresh-btn {
+      background: var(--purple);
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: 0.3s;
+    }
+
+    .refresh-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+    }
+
+    .filters {
+      padding: 24px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tabs {
+      display: flex;
+      background: #000;
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .tab {
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--muted);
+      transition: 0.2s;
+    }
+
+    .tab.active {
+      background: var(--card);
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .content {
+      padding: 32px;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      position: relative;
+      transition: border-color 0.3s;
+    }
+
+    .stat-card:hover {
+      border-color: var(--purple);
+    }
+
+    .stat-card label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 12px;
+    }
+
+    .stat-card .val {
+      font-size: 40px;
+      font-weight: 900;
+      letter-spacing: -2px;
+    }
+
+    .stat-card.profit .val {
+      background: linear-gradient(90deg, #fff, var(--green));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sub-stats {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .sub-stat strong {
+      color: #fff;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin: 40px 0 20px;
+    }
+
+    .section-header h2 {
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--border), transparent);
+    }
+
+    .table-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      text-align: left;
+      padding: 16px 24px;
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .adset-row {
+      cursor: pointer;
+      transition: 0.2s;
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .adset-row:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .adset-row td {
+      font-weight: 700;
+    }
+
+    .ad-row {
+      display: none;
+      background: #040409;
+    }
+
+    .ad-row.visible {
+      display: table-row;
+    }
+
+    .ad-row td {
+      padding-left: 60px;
+      color: var(--muted);
+    }
+
+    .ad-row:hover td {
+      color: #fff;
+    }
+
+    /* RED ALERT STYLING */
+    .red-alert-row {
+      background: rgba(239, 68, 68, 0.05) !important;
+      color: var(--red) !important;
+      position: relative;
+    }
+
+    .red-alert-row::before {
+      content: "RED ALERT";
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%) rotate(-90deg);
+      font-size: 8px;
+      font-weight: 900;
+      color: var(--red);
+      opacity: 0.8;
+    }
+
+    .red-alert-row td {
+      color: var(--red) !important;
+    }
+
+    .red-alert-row .toggle-ico {
+      color: var(--red) !important;
+    }
+
+    .red-alert-row .badge {
+      background: rgba(239, 68, 68, 0.2) !important;
+      border: 1px solid var(--red);
+    }
+
+    .toggle-ico {
+      display: inline-block;
+      width: 20px;
+      transition: 0.3s;
+      color: var(--purple);
+    }
+
+    .expanded .toggle-ico {
+      transform: rotate(90deg);
+    }
+
+    .badge {
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      display: inline-block;
+    }
+
+    .badge-green {
+      background: rgba(34, 197, 94, 0.1);
+      color: var(--green);
+    }
+
+    .badge-red {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--red);
+    }
+
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+    }
+
+    .bar-track {
+      width: 100px;
+      height: 6px;
+      background: #000;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: var(--purple);
+      box-shadow: 0 0 10px var(--purple);
+    }
+
+    #loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.5s;
+    }
+
+    .orb {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--purple);
+      filter: blur(30px);
+      animation: pulse 2s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from {
+        opacity: 0.3;
+        transform: scale(0.8);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1.2);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="loader">
+    <div class="orb"></div>
+  </div>
+
+  <div class="page-container">
+    <header>
+      <div class="brand">
+        <div class="logo-box">💰</div>
+        <div>AG MEDIA <span style="color:var(--purple)">CORE</span></div>
+      </div>
+      <div style="display:flex; align-items:center; gap:24px">
+        <div style="text-align:right">
+          <div style="font-size:12px; font-weight:800; color:var(--green)">● LIVE WAR ROOM</div>
+          <div style="font-size:10px; color:var(--muted)">Sync: <span id="sync-time">Just now</span></div>
+        </div>
+        <button class="refresh-btn" onclick="updateDashboard()">
+          REFRESH DATA
+        </button>
+      </div>
+    </header>
+
+    <div class="filters">
+      <div class="tabs">
+        <div class="tab active" data-preset="today">TODAY</div>
+        <div class="tab" data-preset="yesterday">YESTERDAY</div>
+        <div class="tab" data-preset="last_7d">7 DAYS</div>
+      </div>
+      <div style="font-size:12px; font-weight:600; color:var(--muted)">
+        Ad Account: <span style="color:#fff">RideshareAd (937458956444860)</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="hero-stats">
+        <div class="stat-card profit">
+          <label>Net Profit</label>
+          <div class="val" id="total-profit">$0</div>
+          <div class="sub-stats">
+            ROI: <strong id="total-roi">0%</strong>
+          </div>
+        </div>
+        <div class="stat-card">
+          <label>Total Revenue</label>
+          <div class="val" id="total-rev">$0</div>
+          <div class="sub-stats">
+            Lead Value: <strong>$40.00</strong>
+          </div>
+        </div>
+        <div class="stat-card">
+          <label>Meta Ad Spend</label>
+          <div class="val" id="total-spend">$0</div>
+          <div class="sub-stats">
+            CPM: <strong>$24.12</strong>
+          </div>
+        </div>
+        <div class="stat-card">
+          <label>Funnel Context</label>
+          <div class="val" id="prelander-clicks">0</div>
+          <div class="sub-stats">
+            Offers: <strong id="offer-clicks" style="color:#fff">0</strong>
+            CVR: <strong id="prelander-cvr" style="color:var(--cyan)">0.00%</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <h2>Performance Hierarchical View</h2>
+        <div class="section-line"></div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Hierarchical Entity</th>
+              <th>Spend</th>
+              <th>Revenue</th>
+              <th>Profit</th>
+              <th>ROI</th>
+              <th>Leads</th>
+              <th>Offer Clicks</th>
+            </tr>
+          </thead>
+          <tbody id="report-body">
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let currentPreset = 'today';
+
+    async function updateDashboard() {
+      try {
+        const res = await fetch(`/api/metrics?date_preset=${currentPreset}&t=${Date.now()}`);
+        const data = await res.json();
+        if (!data) return;
+
+        const totals = data.totals || {};
+        const adsets = data.adsets || [];
+        const daily = data.daily_breakdown || [];
+
+        // Update Totals
+        document.getElementById('total-profit').innerText = '$' + parseFloat(totals.profit || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
+        document.getElementById('total-spend').innerText = '$' + parseFloat(totals.spend || 0).toLocaleString();
+        document.getElementById('total-rev').innerText = '$' + (parseInt(totals.revenue) || 0).toLocaleString();
+        document.getElementById('total-roi').innerText = (totals.roi || 0) + '%';
+
+        document.getElementById('prelander-clicks').innerText = totals.prelander_clicks || 0;
+        document.getElementById('offer-clicks').innerText = totals.offer_clicks || 0;
+        // Update Totals
+        document.getElementById('total-profit').innerText = '$' + parseFloat(totals.profit || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
+        document.getElementById('total-spend').innerText = '$' + parseFloat(totals.spend || 0).toLocaleString();
+        document.getElementById('total-rev').innerText = '$' + (parseInt(totals.revenue) || 0).toLocaleString();
+        document.getElementById('total-roi').innerText = (totals.roi || 0) + '%';
+
+        document.getElementById('prelander-clicks').innerText = totals.prelander_clicks || 0;
+        document.getElementById('offer-clicks').innerText = totals.offer_clicks || 0;
+        document.getElementById('prelander-cvr').innerText = parseFloat(totals.prelander_cvr || 0).toFixed(2) + '%';
+
+        document.getElementById('sync-time').innerText = new Date().toLocaleTimeString();
+
+        // Update Main Table
+        const tbody = document.getElementById('report-body');
+        if (tbody) {
+          tbody.innerHTML = '';
+          if (adsets.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--muted);">No active campaigns found for this period.</td></tr>';
+          } else {
+            adsets.forEach(as => {
+              if (!as) return;
+              const asRow = document.createElement('tr');
+              const isRedAlert = (as.spend >= 10 && as.leads === 0);
+              asRow.className = 'adset-row' + (isRedAlert ? ' red-alert-row' : '');
+              asRow.onclick = () => toggleAdset(as.id);
+              asRow.id = `as-${as.id}`;
+              asRow.innerHTML = `
+                                <td><span class="toggle-ico">▶</span> ${as.name || 'Unknown Adset'}</td>
+                                <td class="mono">$${(as.spend || 0).toFixed(2)}</td>
+                                <td class="mono">$${(as.revenue || 0).toFixed(2)}</td>
+                                <td class="mono" style="color:${(as.profit || 0) >= 0 ? 'var(--green)' : 'var(--red)'}">$${(as.profit || 0).toFixed(2)}</td>
+                                <td><span class="badge ${(as.roi || 0) >= 100 ? 'badge-green' : ((as.roi || 0) < 0 ? 'badge-red' : '')}">${(as.roi || 0).toFixed(0)}%</span></td>
+                                <td class="mono">${as.leads || 0}</td>
+                                <td class="mono">${as.offer_clicks || 0}</td>
+                            `;
+              tbody.appendChild(asRow);
+
+              if (as.ads && Array.isArray(as.ads)) {
+                as.ads.forEach(ad => {
+                  if (!ad) return;
+                  const adRow = document.createElement('tr');
+                  const isAdRedAlert = (ad.spend >= 10 && ad.leads === 0);
+                  adRow.className = `ad-row child-of-${as.id}` + (isAdRedAlert ? ' red-alert-row' : '');
+                  adRow.innerHTML = `
+                                        <td>${ad.name || 'Unknown Ad'} <div style="font-size:9px; color:var(--muted)">${ad.id || ''}</div></td>
+                                        <td class="mono">$${(ad.spend || 0).toFixed(2)}</td>
+                                        <td class="mono">$${(ad.revenue || 0).toFixed(2)}</td>
+                                        <td class="mono">$${(ad.profit || 0).toFixed(2)}</td>
+                                        <td>${(ad.roi || 0).toFixed(0)}%</td>
+                                        <td class="mono">${ad.leads || 0}</td>
+                                        <td class="mono">${ad.offer_clicks || 0}</td>
+                                    `;
+                  tbody.appendChild(adRow);
+                });
+              }
+            });
+          }
+        }
+
+
+        document.getElementById('loader').style.opacity = 0;
+        setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
+
+      } catch (err) {
+        console.error('Update failed:', err);
+        if (document.getElementById('loader')) document.getElementById('loader').style.display = 'none';
+      }
+    }
+
+    function toggleAdset(id) {
+      const row = document.getElementById(`as-${id}`);
+      if (!row) return;
+      row.classList.toggle('expanded');
+      const children = document.querySelectorAll(`.child-of-${id}`);
+      children.forEach(c => c.classList.toggle('visible'));
+    }
+
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentPreset = tab.dataset.preset;
+        updateDashboard();
+      });
+    });
+
+    updateDashboard();
+    setInterval(updateDashboard, 60000);
+  </script>
+</body>
+
+</html>

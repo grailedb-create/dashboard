@@ -1,0 +1,6 @@
+node_modules/
+.env
+server.log
+agent.log
+outreach.log
+.DS_Store
