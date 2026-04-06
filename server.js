@@ -16,6 +16,13 @@ const EVERFLOW_API_KEY = process.env.EVERFLOW_API_KEY;
 const CLOAKER_LOG_PATH = process.env.CLOAKER_LOG_PATH;
 const ZIP_DEBT_URL = 'https://go.zipdebtcheck.com/stats?token=afcfceea8eb90666d6ad3c2f3dde4ff5';
 
+// Internal Cache to handle API Rate Limits / Big Query Limits
+let efCache = {
+    today: { data: [], timestamp: null },
+    yesterday: { data: [], timestamp: null },
+    last_7d: { data: [], timestamp: null }
+};
+
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
@@ -124,10 +131,21 @@ async function getEverflowStats(datePreset = 'today') {
             clicks: row.reporting.total_click
         }));
 
-        return { data: transformed, success: true };
+        // Update Cache
+        efCache[datePreset] = { data: transformed, timestamp: new Date() };
+
+        return { data: transformed, success: true, cached: false };
     } catch (error) {
-        console.error('Everflow fetch failed:', error.response?.data || error.message);
-        return { data: [], success: false };
+        const errorMsg = error.response?.data || error.message;
+        console.error('Everflow fetch failed:', errorMsg);
+
+        // Return cached data if available
+        if (efCache[datePreset] && efCache[datePreset].data.length > 0) {
+            console.log(`Using cached Everflow data for ${datePreset} (Stale)`);
+            return { data: efCache[datePreset].data, success: false, error: 'API_LIMIT', cached: true };
+        }
+
+        return { data: [], success: false, error: errorMsg };
     }
 }
 
